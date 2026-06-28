@@ -31,7 +31,12 @@ export default function Register() {
 
     setSubmitting(true);
     try {
-      await register(name, mobile, email, password);
+      await register({
+        name,
+        email,
+        password,
+        mobile
+      });
       navigate('/dashboard');
     } catch (err) {
       setFormError(err.message);
@@ -60,11 +65,12 @@ export default function Register() {
 
         <label htmlFor="mobile">Mobile Number</label>
         <input
-          id="mobile"
-          type="tel"
-          value={mobile}
-          onChange={(e) => setMobile(e.target.value)}
-          autoComplete="tel"
+        id="mobile"
+        type="tel"
+        value={mobile}
+        onChange={(e) => setMobile(e.target.value)}
+        autoComplete="tel"
+        required
         />
 
         <label htmlFor="email">Email</label>
