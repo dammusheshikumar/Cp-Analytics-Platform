@@ -18,12 +18,6 @@ import {
   getCodeforcesRankColor
 } from '../utils/formatters';
 
-const SORT_OPTIONS = {
-  DATE_DESC: 'Date (Newest first)',
-  DATE_ASC: 'Date (Oldest first)',
-  RATING_CHANGE_DESC: 'Rating Change (High to Low)',
-  RATING_CHANGE_ASC: 'Rating Change (Low to High)'
-};
 
 export default function CodeforcesProfile() {
   const [handleInput, setHandleInput] = useState('');
@@ -34,9 +28,6 @@ export default function CodeforcesProfile() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  const [sortBy, setSortBy] = useState('DATE_DESC');
-  const [filterText, setFilterText] = useState('');
 
   useEffect(() => {
     getLinkedProfiles()
