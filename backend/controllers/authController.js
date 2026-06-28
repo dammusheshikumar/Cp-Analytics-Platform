@@ -1,9 +1,10 @@
 // controllers/authController.js
-// Handles register / login / logout / "who am I" for JWT-based auth.
+// Handles register / login / logout / me for JWT auth
 
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('../utils/asyncHandler');
 const { generateToken } = require('../utils/jwt');
+
 const {
   createUser,
   findUserByEmail,
@@ -13,15 +14,15 @@ const {
 const SALT_ROUNDS = 10;
 
 /**
- * @route   POST /api/auth/register
- * @access  Public
+ * REGISTER
  */
 const register = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, mobile } = req.body;
 
-  if (!name || !email || !password) {
+  // Validation
+  if (!name || !email || !password || !mobile) {
     res.status(400);
-    throw new Error('Name, email, and password are all required');
+    throw new Error('Name, email, password, and mobile are required');
   }
 
   if (password.length < 6) {
@@ -29,32 +30,44 @@ const register = asyncHandler(async (req, res) => {
     throw new Error('Password must be at least 6 characters long');
   }
 
+  // Check existing user
   const existingUser = await findUserByEmail(email.toLowerCase().trim());
   if (existingUser) {
     res.status(409);
     throw new Error('An account with this email already exists');
   }
 
+  // Hash password
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+
+  // Create user (NOW INCLUDING MOBILE)
   const userId = await createUser({
     name: name.trim(),
     email: email.toLowerCase().trim(),
-    passwordHash
+    passwordHash,
+    mobile: mobile.trim()
   });
 
-  const user = { id: userId, email: email.toLowerCase().trim() };
-  const token = generateToken(user);
+  const userPayload = {
+    id: userId,
+    email: email.toLowerCase().trim()
+  };
+
+  const token = generateToken(userPayload);
 
   res.status(201).json({
     message: 'Account created successfully',
     token,
-    user: { id: userId, name: name.trim(), email: user.email }
+    user: {
+      id: userId,
+      name: name.trim(),
+      email: email.toLowerCase().trim()
+    }
   });
 });
 
 /**
- * @route   POST /api/auth/login
- * @access  Public
+ * LOGIN
  */
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -65,12 +78,14 @@ const login = asyncHandler(async (req, res) => {
   }
 
   const user = await findUserByEmail(email.toLowerCase().trim());
+
   if (!user) {
     res.status(401);
     throw new Error('Invalid email or password');
   }
 
   const passwordMatches = await bcrypt.compare(password, user.password_hash);
+
   if (!passwordMatches) {
     res.status(401);
     throw new Error('Invalid email or password');
@@ -81,32 +96,38 @@ const login = asyncHandler(async (req, res) => {
   res.json({
     message: 'Logged in successfully',
     token,
-    user: { id: user.id, name: user.name, email: user.email }
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email
+    }
   });
 });
 
 /**
- * @route   POST /api/auth/logout
- * @access  Private
- * Note: JWTs are stateless, so "logout" is handled by the client deleting
- * its stored token. This endpoint exists for a consistent API contract
- * and a place to add token-blacklisting later if ever needed.
+ * LOGOUT
  */
 const logout = asyncHandler(async (req, res) => {
   res.json({ message: 'Logged out successfully' });
 });
 
 /**
- * @route   GET /api/auth/me
- * @access  Private
+ * GET PROFILE
  */
 const getMe = asyncHandler(async (req, res) => {
   const user = await findUserById(req.user.id);
+
   if (!user) {
     res.status(404);
     throw new Error('User not found');
   }
+
   res.json({ user });
 });
 
-module.exports = { register, login, logout, getMe };
+module.exports = {
+  register,
+  login,
+  logout,
+  getMe
+};

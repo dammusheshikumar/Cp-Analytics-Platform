@@ -8,14 +8,16 @@ const { pool } = require('../config/db');
 /**
  * Create a new user. Returns the inserted user's id.
  */
-async function createUser({ name, email, passwordHash }) {
+// Create a new user. Returns inserted user id.
+async function createUser({ name, email, passwordHash, mobile }) {
   const [result] = await pool.query(
-    `INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)`,
-    [name, email, passwordHash]
+    `INSERT INTO users (name, email, password_hash, mobile)
+     VALUES (?, ?, ?, ?)`,
+    [name, email, passwordHash, mobile]
   );
+
   return result.insertId;
 }
-
 /**
  * Find a user by email (used during login + duplicate-check on register).
  */
