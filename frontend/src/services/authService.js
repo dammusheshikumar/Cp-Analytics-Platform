@@ -3,8 +3,13 @@
 
 import api from './api';
 
-export async function registerUser({ name, email, password }) {
-  const { data } = await api.post('/auth/register', { name, email, password });
+export async function registerUser({ name, email, password, mobile }) {
+  const { data } = await api.post('/auth/register', {
+    name,
+    email,
+    password,
+    mobile
+  });
   return data;
 }
 

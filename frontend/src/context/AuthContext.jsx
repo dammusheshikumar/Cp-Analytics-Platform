@@ -42,20 +42,21 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const register = useCallback(async (name, mobile, email, password) => {
-    setError(null);
-    try {
-      const data = await registerUser({ name, mobile, email, password });
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setUser(data.user);
-      return data.user;
-    } catch (err) {
-      const message = err.response?.data?.message || 'Registration failed. Please try again.';
-      setError(message);
-      throw new Error(message);
-    }
-  }, []);
+  // Wrap the parameters in curly braces { } to destructure the incoming object!
+const register = useCallback(async ({ name, mobile, email, password }) => {
+  setError(null);
+  try {
+    const data = await registerUser({ name, mobile, email, password });
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    setUser(data.user);
+    return data.user;
+  } catch (err) {
+    const message = err.response?.data?.message || 'Registration failed. Please try again.';
+    setError(message);
+    throw new Error(message);
+  }
+}, []);
 
   const logout = useCallback(async () => {
     try {
