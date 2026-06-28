@@ -1,8 +1,11 @@
 // src/services/api.js
+// All API calls related to authentication and platform data fetching.
 
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Vite reads environment variables via import.meta.env instead of process.env.
+// We fallback directly to your live Render backend URL if the env variable isn't set.
+const API_URL = import.meta.env.VITE_API_URL || 'https://cp-analytics-platform-backend.onrender.com/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -20,7 +23,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// If the token is invalid, clear it and bounce to login.
+// If the token is invalid or expired, clear it and bounce to login.
 api.interceptors.response.use(
   (response) => response,
   (error) => {
