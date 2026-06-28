@@ -12,6 +12,12 @@ const pool = mysql.createPool({
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || 'DSh@2006',
   database: process.env.DB_NAME || 'contest_analytics',
+
+  // Required for Aiven MySQL
+  ssl: {
+    rejectUnauthorized: false
+  },
+
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -26,7 +32,7 @@ async function testConnection() {
     connection.release();
   } catch (err) {
     console.error('❌ MySQL connection failed:', err.message);
-    console.error('   Check your .env DB_HOST / DB_USER / DB_PASSWORD / DB_NAME values.');
+    console.error('Check your database credentials and SSL configuration.');
     process.exit(1);
   }
 }
