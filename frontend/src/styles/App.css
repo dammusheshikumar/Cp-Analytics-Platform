@@ -789,3 +789,59 @@ select:focus-visible {
   margin: 0;
   color: var(--text-muted);
 }
+
+/* Styles for mobile compatibility :  */
+
+@media (max-width: 600px) {
+  /* 1. Prevent navbar elements from spilling over */
+  .navbar {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+    text-align: center;
+  }
+  
+  .navbar-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .navbar-user {
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+  }
+
+  /* 2. Optimize registration/login form container sizes */
+  .auth-page {
+    padding: 16px;
+  }
+
+  .auth-form {
+    padding: 24px 16px; /* Shrink heavy side-padding on mobile viewports */
+  }
+
+  /* 3. Convert dashboard grid to a clean vertical stack */
+  .stat-grid {
+    grid-template-columns: 1fr; /* Stacks cards one on top of another smoothly */
+    gap: 12px;
+  }
+
+  /* 4. Let data tables scroll smoothly horizontally instead of stretching */
+  .table-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .table-filters {
+    width: 100%;
+  }
+
+  .table-filters input,
+  .table-filters select {
+    flex: 1;
+  }
+}
+
